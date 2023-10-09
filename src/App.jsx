@@ -1,5 +1,8 @@
 import { useState } from "react";
 import "./styles.css";
+import { InputTodo } from "./components/InputTodo";
+import { IncompleteTodos } from "./components/IncompleteTodos";
+import { CompleteTodos } from "./components/CompleteTodos";
 
 export default function App() {
   //タスクの追加
@@ -67,51 +70,24 @@ export default function App() {
 
   return (
     <>
-      <div className="input_area">
-        <input
-          placeholder="todoを入力"
-          value={todoText}
-          onChange={onChangeTodoText}
-        />
-        <button onClick={oncClickAdd}>追加</button>
-      </div>
+      <InputTodo
+        todoText={todoText}
+        onChangeTodoText={onChangeTodoText}
+        onClickAdd={oncClickAdd}
+        disabled={incompleteTodos.length >= 5}
+      />
 
-      <div className="incomplete_area">
-        <p className="title">未完了のtodo</p>
-        <ul id="incomplete_list">
-          {/* (map, index)…第二引数のindexの部分で何番目のtodoかを取得 */}
-          {incompleteTodos.map((todo, index) => {
-            return (
-              <li key={todo}>
-                <div className="list_row">
-                  <p className="list_content">{todo}</p>
-                  <button onClick={() => onClickComplete(index)}>完了</button>
-                  {/* 関数に引数を渡し、onClick={onClickDelete(index)}にしてしまうと
-                      ボタンが押されていないのに関数が実行されてしまう
-                      引数を渡したいときはアロー関数で新しく関数を生成し、使用したい関数を中で実行する */}
-                  <button onClick={() => onClickDelete(index)}>削除</button>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+      {incompleteTodos.length >= 5 && (
+        <p style={{ color: "red" }}>登録できるtodoは5個までです</p>
+      )}
 
-      <div className="complete_area">
-        <p className="title">完了したtodo</p>
-        <ul id="complete_list">
-          {complateTodos.map((todo, index) => {
-            return (
-              <li key={todo}>
-                <div className="list_row">
-                  <p className="list_content">{todo}</p>
-                  <button onClick={() => oncClickBack(index)}>戻す</button>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+      <IncompleteTodos
+        todos={incompleteTodos}
+        onClickComplete={onClickComplete}
+        onClickDelete={onClickDelete}
+      />
+
+      <CompleteTodos todos={complateTodos} oncClickBack={oncClickBack} />
     </>
   );
 }
